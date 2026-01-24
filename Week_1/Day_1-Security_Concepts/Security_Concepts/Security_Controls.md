@@ -66,9 +66,29 @@ The video then covers controls used when primary controls are missing or when us
 
 
 
+
+
 Key exam takeaways
 
 The instructor emphasizes that examples can often fit more than one type or category, and that real environments may use different combinations of controls. Security professionals should be able to classify a given control both by type (preventive, deterrent, detective, corrective, compensating, directive) and by category (technical, managerial, operational, physical), and understand that new controls and mappings can emerge as technology changes.
+
+
+
+
+
+
+
+**Identification**: The individual makes a claim about their identity without presenting proof.
+
+**Authentication**: The individual proves their identity, such as showing a driver's license.
+
+**Authorization**: The system checks if the individual is allowed to access the resource.
+
+**AAA Process**: Authentication, Authorization, and Accounting are crucial for tracking and managing access.
+
+**Digital** **Application**: In digital systems, identification is often done with usernames, authentication with passwords, and authorization with access control lists.
+
+**Accounting :** Track of all the activity.
 
 
 
