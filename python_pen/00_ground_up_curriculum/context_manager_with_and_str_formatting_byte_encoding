@@ -1,0 +1,35 @@
+2.4 — The with Statement (Context Manager Protocol)
+You've seen with open(...) — this is Python's context manager protocol. Any object implementing __enter__ and __exit__ dunder (double underscore) methods can be used with with. The __exit__ method is guaranteed to run even if an exception is raised inside the block.
+In pentest scripts, the critical use cases are:
+
+File handles (auto-close prevents descriptor leaks)
+Network sockets (auto-close prevents connection exhaustion on the target or your machine)
+SSH sessions via Paramiko (auto-close prevents hanging sessions)
+
+# Without context manager — socket leaks if exception occurs mid-block
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((host, port))
+data = s.recv(1024)
+s.close()  # Never reached if recv() throws
+
+# With context manager — guaranteed cleanup
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect((host, port))
+    data = s.recv(1024)
+    # s.close() called automatically here, always
+
+2.5 — String Formatting and Byte Encoding
+Network protocols operate on bytes, not strings. Python 3 enforces a hard distinction: str is Unicode text, bytes is raw binary data. Converting between them requires explicit encoding.
+# String to bytes — needed before sending over a socket
+payload = "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n"
+payload_bytes = payload.encode("utf-8")  # b'GET / HTTP/1.1\r\n...'
+
+# Bytes to string — needed after receiving from a socket
+response = s.recv(4096)
+response_str = response.decode("utf-8", errors="replace")
+# errors="replace" substitutes ? for bytes that can't be decoded
+# Use this when parsing server banners that may contain non-UTF-8 bytes
+
+# f-strings for dynamic output (Python 3.6+)
+print(f"[+] {host}:{port} open — banner: {banner[:50]}")
+The \r\n (carriage return, line feed) sequence is critical: HTTP/1.1 and many other protocols (SMTP, FTP, POP3) require CRLF (Carriage Return Line Feed) line endings per RFC (Request for Comments) specification. Using \n alone will cause protocol parsing failures on strict servers.
